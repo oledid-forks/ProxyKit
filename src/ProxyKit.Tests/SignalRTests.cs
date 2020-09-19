@@ -130,18 +130,18 @@ namespace ProxyKit
                             .AllowAnyHeader()
                             .AllowAnyMethod());
                 });
-
                 services.AddSignalR();
             }
 
             public void Configure(IApplicationBuilder app, IHostingEnvironment env)
             {
+                app.UseRouting();
                 app.UseCors("all");
                 app.UseForwardedHeadersWithPathBase();
                 app.UseWebSockets();
-                app.UseSignalR(routes =>
+                app.UseEndpoints(endpoints =>
                 {
-                    routes.MapHub<Ping>("/ping");
+                    endpoints.MapHub<Ping>("/ping");
                 });
             }
 
@@ -171,7 +171,7 @@ namespace ProxyKit
             public void Configure(IApplicationBuilder app, IServiceProvider sp)
             {
                 Task<HttpResponseMessage> Send(HttpContext context, int servicePort) => context
-                    .ForwardTo(new Uri($"http://localhost:{servicePort}"))
+                    .ForwardTo($"http://localhost:{servicePort}")
                     .AddXForwardedHeaders()
                     .Send();
 
