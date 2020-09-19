@@ -52,14 +52,6 @@ namespace ProxyKit
             app.UseMiddleware<ProxyMiddleware<TProxyHandler>>();
         }
 
-        [Obsolete("Use app.Map(\"/path\", appProxy=> { appProxy.RunProxy(...); } instead. " +
-                  "This will be removed in a future version", true)]
-        public static void RunProxy(
-            this IApplicationBuilder app,
-            PathString pathMatch,
-            HandleProxyRequest handleProxyRequest) =>
-            throw new NotSupportedException();
-
         /// <summary>
         ///     Adds WebSocket proxy that forwards websocket connections
         ///     to destination Uri based the HttpContext if the request matches
