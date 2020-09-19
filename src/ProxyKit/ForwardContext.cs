@@ -3,6 +3,7 @@ using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Sockets;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 
@@ -36,15 +37,18 @@ namespace ProxyKit
         /// Sends the upstream request to the upstream host.
         /// </summary>
         /// <returns>An <see cref="HttpResponseMessage"/> the represents the proxy response.</returns>
-        public async Task<HttpResponseMessage> Send()
+        public async Task<HttpResponseMessage> Send(CancellationToken cancellationToken = default)
         {
+            using var linkedCts = 
+                CancellationTokenSource.CreateLinkedTokenSource(HttpContext.RequestAborted, cancellationToken);
+
             try
             {
                 return await _httpClient
                     .SendAsync(
                         UpstreamRequest,
                         HttpCompletionOption.ResponseHeadersRead,
-                        HttpContext.RequestAborted)
+                        linkedCts.Token)
                     .ConfigureAwait(false);
             }
             catch (TaskCanceledException ex) when (ex.InnerException is IOException)
