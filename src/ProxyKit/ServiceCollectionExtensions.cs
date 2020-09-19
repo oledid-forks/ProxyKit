@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Net.Http;
-
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ProxyKit
@@ -33,6 +32,7 @@ namespace ProxyKit
             services
                 .Configure(configureOptions)
                 .AddOptions<ProxyOptions>();
+
             return services;
         }
     }
