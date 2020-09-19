@@ -1,5 +1,6 @@
 using System;
 using System.Net.Http;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -17,7 +18,8 @@ namespace ProxyKit
         /// forwarding request context.</returns>
         public static ForwardContext ForwardTo(this HttpContext context, UpstreamHost upstreamHost)
         {
-            var upstreamUri = upstreamHost.BuildUpstreamUri(context.Request.Path, context.Request.QueryString);
+           var upstreamUri = upstreamHost
+               .BuildUpstreamUri(context.Request.Path, context.Request.QueryString);
             return ForwardTo(context, upstreamUri);
         }
 

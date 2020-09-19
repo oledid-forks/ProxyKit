@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
-using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -97,7 +96,7 @@ namespace ProxyKit
                     var buffer = new byte[100];
                     await stream.WriteAsync(buffer, 0, 100);
                     await stream.FlushAsync();
-                    stream.Dispose();
+                    await stream.DisposeAsync();
                 })
             };
             var response = await client.SendAsync(request);
@@ -258,14 +257,14 @@ namespace ProxyKit
                 app.Map("/ws", appInner =>
                 {
                     appInner.UseWebSocketProxy(
-                        _ => new Uri($"ws://localhost:{port}/ws/"),
+                        _ => $"ws://localhost:{port}/ws/",
                         options => options.AddXForwardedHeaders());
                 });
 
                 app.Map("/ws-custom", appInner =>
                 {
                     appInner.UseWebSocketProxy(
-                        _ => new Uri($"ws://localhost:{port}/ws-custom/"),
+                        _ => $"ws://localhost:{port}/ws-custom/",
                         options => options.SetRequestHeader("X-TraceId", "123"));
                 });
 

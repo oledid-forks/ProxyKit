@@ -50,9 +50,8 @@ namespace ProxyKit
             return builder.Uri;
         }
 
-        private static int GetDefaultPort(string scheme)
-        {
-            return scheme switch
+        private static int GetDefaultPort(string scheme) =>
+            scheme switch
             {
                 "http" => 80,
                 "https" => 443,
@@ -60,7 +59,6 @@ namespace ProxyKit
                 "wss" => 443,
                 _ => throw new NotSupportedException()
             };
-        }
 
         public string Scheme { get; }
 
@@ -72,12 +70,16 @@ namespace ProxyKit
 
         public Uri Uri { get; }
 
-        public override string ToString()
-        {
-            return $"{Scheme}://{Host.ToString()}{PathBase.Value}";
-        }
+        public override string ToString() => $"{Scheme}://{Host}{PathBase.Value}";
 
-        public static implicit operator UpstreamHost(string uri) => new Uri(uri);
+        public static implicit operator UpstreamHost(string uriString)
+        {
+            var upstreamUri = new Uri(uriString);
+            return new UpstreamHost(
+                upstreamUri.Scheme,
+                HostString.FromUriComponent(upstreamUri),
+                PathString.FromUriComponent(upstreamUri));
+        }
 
         public static implicit operator UpstreamHost(Uri upstreamUri) => new UpstreamHost(
             upstreamUri.Scheme,

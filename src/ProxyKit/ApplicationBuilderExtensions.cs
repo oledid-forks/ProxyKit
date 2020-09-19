@@ -60,25 +60,25 @@ namespace ProxyKit
         /// <param name="app">
         ///     The application builder.
         /// </param>
-        /// <param name="getUpstreamUri">
+        /// <param name="getUpstreamHost">
         ///     A function to get the uri to forward the websocket connection to. The
         ///     result of which must start with ws:// or wss://
         /// </param>
         public static void UseWebSocketProxy(
             this IApplicationBuilder app, 
-            Func<HttpContext, UpstreamHost> getUpstreamUri)
+            Func<HttpContext, UpstreamHost> getUpstreamHost)
         {
             if (app is null)
             {
                 throw new ArgumentNullException(nameof(app));
             }
 
-            if (getUpstreamUri is null)
+            if (getUpstreamHost is null)
             {
                 throw new ArgumentNullException(nameof(app));
             }
 
-            app.UseMiddleware<WebSocketProxyMiddleware>(getUpstreamUri);
+            app.UseMiddleware<WebSocketProxyMiddleware>(getUpstreamHost);
         }
 
         /// <summary>
@@ -89,7 +89,7 @@ namespace ProxyKit
         /// <param name="app">
         ///     The application builder.
         /// </param>
-        /// <param name="getUpstreamUri">
+        /// <param name="getUpstreamHost">
         ///     A function to get the uri to forward the websocket connection to. The
         ///     result of which must start with ws:// or wss://
         /// </param>
@@ -99,7 +99,7 @@ namespace ProxyKit
         /// </param>
         public static void UseWebSocketProxy(
             this IApplicationBuilder app,
-            Func<HttpContext, UpstreamHost> getUpstreamUri,
+            Func<HttpContext, UpstreamHost> getUpstreamHost,
             Action<WebSocketClientOptions> configureClientOptions)
         {
             if (app is null)
@@ -107,12 +107,12 @@ namespace ProxyKit
                 throw new ArgumentNullException(nameof(app));
             }
 
-            if (getUpstreamUri is null)
+            if (getUpstreamHost is null)
             {
-                throw new ArgumentNullException(nameof(app));
+                throw new ArgumentNullException(nameof(getUpstreamHost));
             }
 
-            app.UseMiddleware<WebSocketProxyMiddleware>(getUpstreamUri, configureClientOptions);
+            app.UseMiddleware<WebSocketProxyMiddleware>(getUpstreamHost, configureClientOptions);
         }
 
         private class HandleProxyRequestWrapper : IProxyHandler
