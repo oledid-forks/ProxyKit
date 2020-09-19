@@ -12,22 +12,29 @@ namespace ProxyKit
         ///     Forward the request to the specified upstream host.
         /// </summary>
         /// <param name="context">The HttpContext</param>
-        /// <param name="upstreamHost">The upstream host to forward the requests
+        /// <param name="upstreamHost">The upstream host to forward the request
         /// to.</param>
         /// <returns>A <see cref="ForwardContext"/> that represents the
         /// forwarding request context.</returns>
         public static ForwardContext ForwardTo(this HttpContext context, UpstreamHost upstreamHost)
         {
-            var uri = new Uri(UriHelper.BuildAbsolute(
-                upstreamHost.Scheme,
-                upstreamHost.Host,
-                upstreamHost.PathBase,
-                context.Request.Path,
-                context.Request.QueryString));
+            var upstreamUri = upstreamHost.BuildUpstreamUri(context.Request.Path, context.Request.QueryString);
+            return ForwardTo(context, upstreamUri);
+        }
 
+        /// <summary>
+        ///     Forward the request to the specified upstream host.
+        /// </summary>
+        /// <param name="context">The HttpContext</param>
+        /// <param name="upstreamUri">The upstream URI to forward the request
+        /// to.</param>
+        /// <returns>A <see cref="ForwardContext"/> that represents the
+        /// forwarding request context.</returns>
+        public static ForwardContext ForwardTo(this HttpContext context, Uri upstreamUri)
+        {
             var request = context.Request.CreateProxyHttpRequest();
-            request.Headers.Host = uri.Authority;
-            request.RequestUri = uri;
+            request.Headers.Host = upstreamUri.Authority;
+            request.RequestUri = upstreamUri;
 
             IHttpClientFactory httpClientFactory;
             try
