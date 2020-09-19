@@ -7,7 +7,7 @@ using ProxyKit;
 
 public class MyTypedHandler : IProxyHandler
 {
-    private IUpstreamHostLookup _upstreamHostLookup;
+    private readonly IUpstreamHostLookup _upstreamHostLookup;
 
     public MyTypedHandler(IUpstreamHostLookup upstreamHostLookup)
     {
